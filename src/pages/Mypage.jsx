@@ -7,6 +7,7 @@ const Mypage = () => {
   const { user, accessToken, setUser } = useUserStore();
   const [nickname, setNickname] = useState(user?.nickname || "");
   const [avatar, setAvatar] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   // 사용자 정보 확인
   useEffect(() => {
@@ -16,6 +17,8 @@ const Mypage = () => {
         setUser(userData);
       } catch (error) {
         console.error("사용자 데이터 불러오기 실패");
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -26,11 +29,6 @@ const Mypage = () => {
 
   // 프로필 변경 로직
   const handleProfileChange = async () => {
-    if (!accessToken) {
-      alert("로그인이 필요합니다.");
-      return;
-    }
-
     const formData = new FormData();
     if (avatar) formData.append("avatar", avatar);
     if (nickname) formData.append("nickname", nickname);
@@ -44,14 +42,14 @@ const Mypage = () => {
       alert("프로필 변경 중 문제가 발생했습니다.");
     }
   };
-  if (!accessToken || !user) {
-    alert("로그인이 필요합니다.");
-    // return <Navigate to="/login" />;
-  }
 
   // 사용자 정보 로드 중 조건부 렌더링
-  if (!user) {
+  if (isLoading) {
     return <div>사용자 정보 불러오는 중 입니다.</div>;
+  }
+
+  if (!user) {
+    return <div>사용자 정보가 없습니다.</div>;
   }
 
   return (
