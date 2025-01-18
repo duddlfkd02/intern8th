@@ -1,7 +1,7 @@
 import { Navigate } from "react-router-dom";
 import useUserStore from "../store/authStore";
 
-const ProtectedRoute = ({ element }) => {
+const ProtectedRoute = ({ children }) => {
   const { accessToken } = useUserStore();
 
   if (!accessToken) {
@@ -9,7 +9,7 @@ const ProtectedRoute = ({ element }) => {
     // return <Navigate to="/login" />;
   }
 
-  return element;
+  return children;
 };
 
 export default ProtectedRoute;
