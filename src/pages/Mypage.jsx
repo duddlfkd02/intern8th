@@ -1,11 +1,14 @@
-import { useEffect } from "react";
-import { getUser } from "../api/auth";
+import { useEffect, useState } from "react";
+import { changeProfile, getUser } from "../api/auth.js";
 import useUserStore from "../store/authStore";
 import { Navigate } from "react-router-dom";
 
 const Mypage = () => {
   const { user, accessToken, setUser } = useUserStore();
+  const [nickname, setNickname] = useState(user?.nickname || "");
+  const [avatar, setAvatar] = useState(null);
 
+  // 사용자 정보 확인
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
@@ -21,9 +24,34 @@ const Mypage = () => {
     }
   }, [accessToken, setUser]);
 
+  // 프로필 변경 로직
+  const handleProfileChange = async () => {
+    if (!accessToken) {
+      alert("로그인이 필요합니다.");
+      return;
+    }
+
+    const formData = new FormData();
+    if (avatar) formData.append("avatar", avatar);
+    if (nickname) formData.append("nickname", nickname);
+
+    try {
+      const response = await changeProfile(accessToken, formData);
+      alert(response.message);
+      setUser({ ...user, avatar: response.avatar, nickname: response.nickname });
+    } catch (error) {
+      console.error("프로필 변경 실패", error.message);
+      alert("프로필 변경 중 문제가 발생했습니다.");
+    }
+  };
   if (!accessToken || !user) {
     alert("로그인이 필요합니다.");
-    return <Navigate to="/login" />;
+    // return <Navigate to="/login" />;
+  }
+
+  // 사용자 정보 로드 중 조건부 렌더링
+  if (!user) {
+    return <div>사용자 정보 불러오는 중 입니다.</div>;
   }
 
   return (
@@ -32,6 +60,20 @@ const Mypage = () => {
       <p>아이디 : {user.id}</p>
       <p>{user.nickname}</p>
       <p>프로필 이미지 : {user.avatar ? <img src={user.avatar} alt={user.nickname} /> : "이미지가 없습니다."}</p>
+
+      {/* 프로필 변경 */}
+      <div>
+        <h2>프로필 변경</h2>
+        <div>
+          <label>새 닉네임</label>
+          <input type="text" value={nickname} onChange={(e) => setNickname(e.target.value)} />
+        </div>
+        <div>
+          <label>새 프로필 이미지</label>
+          <input type="file" accept="image/*" onChange={(e) => setAvatar(e.target.files[0])} />
+        </div>
+        <button onClick={handleProfileChange}>변경하기</button>
+      </div>
     </div>
   );
 };
