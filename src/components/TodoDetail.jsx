@@ -13,11 +13,24 @@ const TodoDetail = () => {
   if (error) return <div>오류 발생했습니다 {error.message}</div>;
 
   return (
-    <div>
-      <h1>Todo Detail</h1>
-      <p>아이디 : {data.id}</p>
-      <p>할 일 : {data.title}</p>
-      <p>상태 : {data.completed ? "완료" : "미완료"}</p>
+    <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50">
+      <div className="w-full max-w-lg rounded-lg bg-white p-6 shadow-md">
+        <h1 className="mb-6 text-center text-2xl font-bold">Todo Detail</h1>
+        <div className="space-y-4">
+          <p className="text-lg text-gray-800">
+            <span className="font-bold text-gray-600">아이디:</span> {data.id}
+          </p>
+          <p className="text-lg text-gray-800">
+            <span className="font-bold text-gray-600">할 일:</span> {data.title}
+          </p>
+          <p className="text-lg text-gray-800">
+            <span className="font-bold text-gray-600">상태:</span>{" "}
+            <span className={`rounded-lg px-3 py-1 font-semibold ${data.completed ? "text-blue-800" : "text-red-800"}`}>
+              {data.completed ? "완료" : "미완료"}
+            </span>
+          </p>
+        </div>
+      </div>
     </div>
   );
 };
