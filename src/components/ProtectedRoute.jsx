@@ -6,7 +6,7 @@ const ProtectedRoute = ({ element }) => {
 
   if (!accessToken) {
     alert("로그인이 필요합니다.");
-    return <Navigate to="/login" />;
+    // return <Navigate to="/login" />;
   }
 
   return element;
