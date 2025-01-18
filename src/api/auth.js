@@ -30,3 +30,20 @@ export const getUser = async (accessToken) => {
     throw error;
   }
 };
+
+// 프로필 변경
+export const changeProfile = async (accessToken, formData) => {
+  try {
+    const response = await baseInstance.patch("/profile", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${accessToken}`
+      }
+    });
+    console.log("프로필 변경 데이터 확인", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("프로필 변경 중 오류 발생", error.message);
+    throw error;
+  }
+};
