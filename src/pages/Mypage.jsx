@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { getUser } from "../api/auth";
 import useUserStore from "../store/authStore";
-import { redirect } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
 const Mypage = () => {
   const { user, accessToken, setUser } = useUserStore();
@@ -21,9 +21,9 @@ const Mypage = () => {
     }
   }, [accessToken, setUser]);
 
-  if (!user) {
-    redirect("/login");
-    return <div>로그인 해주세요!</div>;
+  if (!accessToken || !user) {
+    alert("로그인이 필요합니다.");
+    return <Navigate to="/login" />;
   }
 
   return (
