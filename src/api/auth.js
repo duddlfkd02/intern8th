@@ -1,20 +1,20 @@
 import baseInstance from "../axiosinstance/join";
 
-// 회원 가입
+//회원 가입
 export const register = async (userData) => {
   const response = await baseInstance.post("/register", userData);
   console.log("회원가입", response.data);
   return response.data;
 };
 
-// 로그인
+//로그인
 export const login = async (userData) => {
   const response = await baseInstance.post("/login", userData);
   console.log("로그인 데이터 확인", response.data);
   return response.data;
 };
 
-// 회원정보 확인
+//회원정보 확인
 export const getUser = async (accessToken) => {
   try {
     const response = await baseInstance.get("/user", {
@@ -31,7 +31,7 @@ export const getUser = async (accessToken) => {
   }
 };
 
-// 프로필 변경
+//프로필 변경
 export const changeProfile = async (accessToken, formData) => {
   try {
     const response = await baseInstance.patch("/profile", formData, {

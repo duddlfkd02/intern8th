@@ -1,20 +1,23 @@
 import { useForm } from "react-hook-form";
 import { login } from "../api/auth";
 import useUserStore from "../store/authStore";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
   const { register: formRegister, handleSubmit, reset } = useForm();
   const setUser = useUserStore((state) => state.setUser);
+  const navigate = useNavigate();
 
   const onSubmit = async (data) => {
+    console.log("현재 토큰 확인".accessToken);
     try {
       const response = await login(data);
 
-      if (data.success) {
+      if (response.success) {
         alert(response.message);
         setUser(response);
         reset();
+        navigate("/mypage");
       } else {
         alert("로그인 실패!", response.data.message);
       }

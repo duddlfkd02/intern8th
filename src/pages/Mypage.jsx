@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { changeProfile, getUser } from "../api/auth.js";
 import useUserStore from "../store/authStore";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Mypage = () => {
   const { user, accessToken, setUser, clearUser } = useUserStore();
@@ -10,80 +10,46 @@ const Mypage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
-  //Mockdata
+  // 사용자 정보 확인
   useEffect(() => {
-    const fetchMockUserInfo = async () => {
+    const fetchUserInfo = async () => {
       try {
-        const mockUserData = {
-          id: "테스트 유저",
-          nickname: "테스트 유저",
-          avatar: null
-        };
-        setUser(mockUserData);
+        const userData = await getUser(accessToken);
+        setUser(userData);
       } catch (error) {
-        console.error("Mock 사용자 데이터 설정 오류", error);
+        console.error("사용자 데이터 불러오기 실패");
       } finally {
         setIsLoading(false);
       }
     };
-    fetchMockUserInfo();
-  }, [setUser]);
 
-  // 프로필 변경 로직 - Mock
-  const handleMockProfilechange = async () => {
+    if (accessToken) {
+      fetchUserInfo();
+    }
+  }, [accessToken, setUser]);
+
+  // 프로필 변경 로직
+  const handleProfileChange = async () => {
+    const formData = new FormData();
+    if (avatar) formData.append("avatar", avatar);
+    if (nickname) formData.append("nickname", nickname);
+
     try {
-      const mockResponse = {
-        message: "프로필 변경 성공",
-        avatar: URL.createObjectURL(avatar),
-        nickname
-      };
-      alert(mockResponse.message);
-      setUser({ ...user, avatar: mockResponse.avatar, nickname: mockResponse.nickname });
+      const response = await changeProfile(accessToken, formData);
+      alert(response.message);
+      setUser({ ...user, avatar: response.avatar, nickname: response.nickname });
     } catch (error) {
-      console.log("Mock 프로필 변경 실패", error.message);
+      console.error("프로필 변경 실패", error.message);
+      alert("프로필 변경 중 문제가 발생했습니다.");
     }
   };
 
   // 로그아웃 로직
   const handleLogout = () => {
     clearUser();
-    navigate("/login");
+    navigate("/");
     alert("로그아웃 되었습니다.");
   };
-
-  // 사용자 정보 확인
-  // useEffect(() => {
-  //   const fetchUserInfo = async () => {
-  //     try {
-  //       const userData = await getUser(accessToken);
-  //       setUser(userData);
-  //     } catch (error) {
-  //       console.error("사용자 데이터 불러오기 실패");
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //   };
-
-  //   if (accessToken) {
-  //     fetchUserInfo();
-  //   }
-  // }, [accessToken, setUser]);
-
-  // 프로필 변경 로직
-  // const handleProfileChange = async () => {
-  //   const formData = new FormData();
-  //   if (avatar) formData.append("avatar", avatar);
-  //   if (nickname) formData.append("nickname", nickname);
-
-  //   try {
-  //     const response = await changeProfile(accessToken, formData);
-  //     alert(response.message);
-  //     setUser({ ...user, avatar: response.avatar, nickname: response.nickname });
-  //   } catch (error) {
-  //     console.error("프로필 변경 실패", error.message);
-  //     alert("프로필 변경 중 문제가 발생했습니다.");
-  //   }
-  // };
 
   // 사용자 정보 로드 중 조건부 렌더링
   if (isLoading) {

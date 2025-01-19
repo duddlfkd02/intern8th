@@ -1,26 +1,12 @@
 import { useForm } from "react-hook-form";
 import useUserStore from "../store/authStore";
 import { register } from "../api/auth";
-import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
 const SignUp = () => {
   const { register: formRegister, handleSubmit, reset } = useForm();
   const setUser = useUserStore((state) => state.setUser);
-
-  // const testConnection = async () => {
-  //   try {
-  //     const response = await axios.post("https://moneyfulpublicpolicy.co.kr/register", {
-  //       id: "testuser",
-  //       password: "testpassword",
-  //       nickname: "testnickname"
-  //     });
-  //     console.log("응답 성공:", response.data);
-  //   } catch (error) {
-  //     console.error("서버 연결 테스트 실패:", error.message);
-  //   }
-  // };
-
-  // testConnection();
+  const navigate = useNavigate();
 
   const onSubmit = async (data) => {
     try {
@@ -30,6 +16,7 @@ const SignUp = () => {
         alert(response.message);
         setUser(data);
         reset();
+        navigate("/login");
       } else {
         alert("회원가입 실패했습니다.");
       }
